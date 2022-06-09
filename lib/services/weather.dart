@@ -38,34 +38,72 @@ class WeatherModel {
   }
 
   //Theo GPS
-  Future<void> getCurrentWeatherByLocation() async {
+  Future<MyLocation> getCurrentWeatherByLocation(
+      {Map<String, dynamic>? geo}) async {
     String url;
     //Get current weather
-    await location.getCurrentLocation();
-    debugPrint(location.longitude.toString());
-    debugPrint(location.latitude.toString());
-    url = kOpenWeatherMapAPICurrent +
-        "lat=${location.latitude}&lon=${location.longitude}&appid=$kApiKey&units=metric&lang=vi";
-    debugPrint(url);
+    if (geo == null) {
+      if (await location.getCurrentLocation() == true) {
+        debugPrint(location.longitude.toString());
+        debugPrint(location.latitude.toString());
 
-    NetworkingHelper networkingHelper = NetworkingHelper(url: url);
-    var weatherData = await networkingHelper.getData();
-    if (weatherData.toString() != '404') {
-      currentWeatherData = weatherData;
+        url = kOpenWeatherMapAPICurrent +
+            "lat=${location.latitude}&lon=${location.longitude}&appid=$kApiKey&units=metric&lang=vi";
+        debugPrint(url);
 
-      //Get detailed weather
-      url = kOpenWeatherMapAPIOneCall +
-          "lat=${location.latitude}&lon=${location.longitude}&exclude=minutely&appid=$kApiKey&units=metric&lang=vi";
-      debugPrint(url);
-      networkingHelper = NetworkingHelper(url: url);
-      weatherData = await networkingHelper.getData();
-      if (weatherData.toString() != '404') {
-        detailWeatherData = weatherData;
+        NetworkingHelper networkingHelper = NetworkingHelper(url: url);
+        var weatherData = await networkingHelper.getData();
+        if (weatherData.toString() != '404') {
+          currentWeatherData = weatherData;
+
+          //Get detailed weather
+          url = kOpenWeatherMapAPIOneCall +
+              "lat=${location.latitude}&lon=${location.longitude}&exclude=minutely&appid=$kApiKey&units=metric&lang=vi";
+          debugPrint(url);
+          networkingHelper = NetworkingHelper(url: url);
+          weatherData = await networkingHelper.getData();
+          if (weatherData.toString() != '404') {
+            detailWeatherData = weatherData;
+          }
+        } else {
+          currentWeatherData = null;
+          detailWeatherData = null;
+        }
+      } else {
+        currentWeatherData = null;
+        detailWeatherData = null;
       }
     } else {
-      currentWeatherData = null;
-      detailWeatherData = null;
+      location = MyLocation(latitude: geo['lat'], longitude: geo['lon']);
+      debugPrint(location.longitude.toString());
+      debugPrint(location.latitude.toString());
+
+      url = kOpenWeatherMapAPICurrent +
+          "lat=${location.latitude}&lon=${location.longitude}&appid=$kApiKey&units=metric&lang=vi";
+      debugPrint(url);
+
+      NetworkingHelper networkingHelper = NetworkingHelper(url: url);
+      var weatherData = await networkingHelper.getData();
+      if (weatherData.toString() != '404') {
+        currentWeatherData = weatherData;
+
+        //Get detailed weather
+        url = kOpenWeatherMapAPIOneCall +
+            "lat=${location.latitude}&lon=${location.longitude}&exclude=minutely&appid=$kApiKey&units=metric&lang=vi";
+        debugPrint(url);
+        networkingHelper = NetworkingHelper(url: url);
+        weatherData = await networkingHelper.getData();
+        if (weatherData.toString() != '404') {
+          detailWeatherData = weatherData;
+        }
+      } else {
+        currentWeatherData = null;
+        detailWeatherData = null;
+      }
     }
+
+    return MyLocation(
+        longitude: location.longitude, latitude: location.latitude);
   }
 
   static String getWeatherIcon(int condition) {

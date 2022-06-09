@@ -1,8 +1,10 @@
-import 'package:climate_app/screens/location_screen.dart';
 import 'package:climate_app/services/weather.dart';
 import '../services/location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+
+import 'error_page.dart';
+import 'location_screen.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
@@ -25,17 +27,33 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 
   Future getCurrentWeatherData() async {
-    await weatherModel.getCurrentWeatherByLocation();
-    // debugPrint(weatherModel.currentWeatherData.toString());
-    if (weatherModel.currentWeatherData != null &&
-        weatherModel.detailWeatherData != null) {
+    try {
+      var location = await weatherModel.getCurrentWeatherByLocation();
+      // debugPrint(weatherModel.currentWeatherData.toString());
+      if (weatherModel.currentWeatherData != null &&
+          weatherModel.detailWeatherData != null) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => LocationScreen(
+                      currentWeatherData: weatherModel.currentWeatherData,
+                      detailedWeatherData: weatherModel.detailWeatherData,
+                      location: location,
+                    )));
+      } else {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const ErrorPage(),
+            ));
+      }
+    } catch (e) {
+      debugPrint(e.toString());
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => LocationScreen(
-                    currentWeatherData: weatherModel.currentWeatherData,
-                    detailedWeatherData: weatherModel.detailWeatherData,
-                  )));
+            builder: (context) => const ErrorPage(),
+          ));
     }
   }
 

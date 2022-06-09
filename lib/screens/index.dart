@@ -17,7 +17,7 @@ class _HomePageState extends State<HomePage> {
         decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/sunny.jfif'),
-            colorFilter: ColorFilter.mode(Colors.green, BlendMode.modulate),
+            colorFilter: ColorFilter.mode(Colors.blue, BlendMode.modulate),
             fit: BoxFit.fill,
           ),
           // color: Colors.black.withOpacity(1),

@@ -7,14 +7,17 @@ import '../services/weather.dart';
 import '../components/air_quality_card.dart';
 import '../components/other_weather_info.dart';
 import '../components/hours_weather.dart';
+import 'city_picker.dart';
 
 class LocationScreen extends StatefulWidget {
   final dynamic currentWeatherData;
   final dynamic detailedWeatherData;
+  final MyLocation? location;
   const LocationScreen(
       {Key? key,
       required this.currentWeatherData,
-      required this.detailedWeatherData})
+      required this.detailedWeatherData,
+      this.location})
       : super(key: key);
 
   @override
@@ -22,7 +25,7 @@ class LocationScreen extends StatefulWidget {
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  var location = MyLocation();
+  MyLocation? location;
   var weatherModel = WeatherModel();
   dynamic currentWeatherData;
   dynamic detailedWeatherData;
@@ -30,6 +33,7 @@ class _LocationScreenState extends State<LocationScreen> {
   IconData switchButton = Icons.light_mode;
   dynamic colorSwitchButton = Colors.yellow;
   bool darkMode = false;
+  String cityName = "";
 
   @override
   void initState() {
@@ -37,22 +41,52 @@ class _LocationScreenState extends State<LocationScreen> {
     super.initState();
     currentWeatherData = widget.currentWeatherData;
     detailedWeatherData = widget.detailedWeatherData;
+    location = widget.location;
+    cityName = currentWeatherData['name'].toUpperCase();
     debugPrint(widget.detailedWeatherData.toString());
   }
 
-  void updateWeather() async {
-    WeatherModel weatherModel = WeatherModel();
-    await weatherModel.getCurrentWeatherByLocation();
-    setState(() {
-      currentWeatherData = weatherModel.currentWeatherData;
-      debugPrint(weatherModel.detailWeatherData.toString());
-      detailedWeatherData = weatherModel.detailWeatherData;
-      labelUpdateButton = 'update';
-    });
+  Future<bool> updateWeather({Map<String, dynamic>? geo}) async {
+    try {
+      WeatherModel weatherModel = WeatherModel();
+      MyLocation getLocation;
+      if (geo == null) {
+        getLocation = await weatherModel.getCurrentWeatherByLocation();
+      } else {
+        getLocation = await weatherModel.getCurrentWeatherByLocation(geo: geo);
+      }
+
+      if (weatherModel.currentWeatherData != null &&
+          weatherModel.detailWeatherData != null) {
+        setState(() {
+          currentWeatherData = weatherModel.currentWeatherData;
+          debugPrint(weatherModel.detailWeatherData.toString());
+          detailedWeatherData = weatherModel.detailWeatherData;
+          // cityName = currentWeatherData['name'].toUpperCase();
+          location = getLocation;
+          labelUpdateButton = 'update';
+        });
+        return true;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      setState(() {
+        labelUpdateButton = 'update';
+      });
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Failed update'),
+        duration: Duration(seconds: 3),
+      ),
+    );
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
+    NavigatorState navigator = Navigator.of(context);
     return Scaffold(
       // extendBody: true,
       appBar: AppBar(
@@ -78,8 +112,38 @@ class _LocationScreenState extends State<LocationScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              // Navigator.push(context,
-              //     MaterialPageRoute(builder: (context) => const CityPicker()));
+              CapturedThemes themes =
+                  InheritedTheme.capture(from: context, to: navigator.context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => themes.wrap(
+                    CityPicker(
+                      latitude: location?.latitude ?? 0,
+                      longtitude: location?.longitude ?? 0,
+                      darkTheme: darkMode,
+                    ),
+                  ),
+                ),
+              ).then(
+                (value) {
+                  if (value == null ||
+                      !value.containsKey('lat') ||
+                      !value.containsKey('lon')) {
+                    debugPrint('null');
+                  } else {
+                    debugPrint(value.toString());
+                    setState(() {
+                      labelUpdateButton = 'updating...';
+                    });
+                    updateWeather(geo: value).then((updateResult) {
+                      if (updateResult == true) {
+                        cityName = value['name'];
+                      }
+                    });
+                  }
+                },
+              );
             },
             icon: const Icon(
               Icons.location_city,
@@ -96,7 +160,7 @@ class _LocationScreenState extends State<LocationScreen> {
         title: Column(
           children: [
             Text(
-              currentWeatherData['name'].toUpperCase(),
+              cityName,
               style: TextStyle(
                 color: darkMode == true ? Colors.white : Colors.black,
                 fontWeight: FontWeight.bold,
@@ -134,9 +198,15 @@ class _LocationScreenState extends State<LocationScreen> {
                   ),
                   onPressed: () {
                     setState(() {
-                      labelUpdateButton = 'updating';
+                      labelUpdateButton = 'updating...';
                     });
-                    updateWeather();
+                    updateWeather().then((value) {
+                      if (value == true) {
+                        setState(() {
+                          cityName = currentWeatherData['name'].toUpperCase();
+                        });
+                      }
+                    });
                   },
                 ),
                 const SizedBox(

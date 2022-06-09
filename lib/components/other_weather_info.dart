@@ -28,7 +28,7 @@ class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
                 titleIcon: 'at_press',
               ),
               const SizedBox(
-                width: 30,
+                width: 20,
               ),
               OtherWidgetInformationCard(
                 title: 'Bình minh',
@@ -71,12 +71,12 @@ class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
             children: [
               OtherWidgetInformationCard(
                 value: data.uvi(),
-                title: 'Mức UVI',
+                title: 'Mức UV',
                 bodyIcon: 'uvi_white_black_2',
                 titleIcon: 'uv_white_black',
               ),
               const SizedBox(
-                width: 30,
+                width: 20,
               ),
               OtherWidgetInformationCard(
                 value: data.clouds(),
@@ -143,7 +143,10 @@ class _OtherWidgetInformationCardState
                 const SizedBox(
                   width: 10,
                 ),
-                Text(widget.title!),
+                Text(
+                  widget.title!,
+                  style: const TextStyle(fontSize: 12),
+                ),
               ],
             ),
             // const SizedBox(
