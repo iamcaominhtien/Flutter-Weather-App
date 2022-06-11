@@ -36,7 +36,7 @@ class _WeatherCardState extends State<WeatherCard> {
             top: -40,
             left: 20,
             child: Image.asset(
-              data.getWeatherIcon(),
+              data.getWeatherIcon,
               width: 160.0,
             ),
           ),
@@ -47,7 +47,7 @@ class _WeatherCardState extends State<WeatherCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  data.getDescription(),
+                  data.getDescription,
                   style: const TextStyle(
                       leadingDistribution: TextLeadingDistribution.proportional,
                       color: Colors.white,
@@ -58,7 +58,7 @@ class _WeatherCardState extends State<WeatherCard> {
                   height: 5,
                 ),
                 Text(
-                  data.getDate(),
+                  data.getDate,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,
@@ -79,7 +79,7 @@ class _WeatherCardState extends State<WeatherCard> {
                     Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(
-                        '${data.temp()}°C',
+                        '${data.temp}°C',
                         style: const TextStyle(
                           fontSize: 60,
                           fontWeight: FontWeight.bold,
@@ -90,7 +90,7 @@ class _WeatherCardState extends State<WeatherCard> {
                   ],
                 ),
                 Text(
-                  'Feels like ${data.feelLike()}°C',
+                  'Feels like ${data.feelLike}°C',
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 15,

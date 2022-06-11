@@ -27,23 +27,23 @@ class _AirQualityCardState extends State<AirQualityCard> {
             WidgetItem(
               label: 'Tốc độ gió',
               img: 'windspeed',
-              data: data.windSpeed() + "m/s",
+              data: data.windSpeed + "m/s",
             ),
             WidgetItem(
               label: 'Độ ẩm',
               img: 'humidity',
-              data: data.humidity() + "%",
+              data: data.humidity + "%",
             ),
             widget.daily == false
                 ? WidgetItem(
                     label: 'Tầm nhìn xa',
                     img: 'eye',
-                    data: data.humidity() + "km",
+                    data: data.humidity + "km",
                   )
                 : WidgetItem(
                     label: 'Mức UV',
                     img: 'uv',
-                    data: data.uvi(),
+                    data: data.uvi,
                   ),
           ],
         ));

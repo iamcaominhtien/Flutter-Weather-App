@@ -48,19 +48,20 @@ class _NextSevenDayWeatherState extends State<NextSevenDayWeather> {
                 height: 50,
               ),
               WeatherCard(
-                data: DailyWeatherData(data: widget.weatherData['daily'][1]),
+                data: DailyWeatherData.fromJson(widget.weatherData['daily'][1]),
               ),
               const SizedBox(
                 height: 15,
               ),
               AirQualityCard(
-                  data: DailyWeatherData(data: widget.weatherData['daily'][1]),
+                  data:
+                      DailyWeatherData.fromJson(widget.weatherData['daily'][1]),
                   daily: true),
               Expanded(
                 child: ListView.builder(
                   itemBuilder: (context, index) {
-                    var data = DailyWeatherData(
-                        data: widget.weatherData['daily'][index]);
+                    var data = DailyWeatherData.fromJson(
+                        widget.weatherData['daily'][index]);
 
                     if (index > 0) {
                       TextStyle textStyle = TextStyle(
@@ -75,7 +76,7 @@ class _NextSevenDayWeatherState extends State<NextSevenDayWeather> {
                         children: [
                           Expanded(
                             child: Text(
-                              data.getDayOfWeek(),
+                              data.getDayOfWeek ?? "Unknown",
                               style: textStyle,
                             ),
                           ),
@@ -87,13 +88,13 @@ class _NextSevenDayWeatherState extends State<NextSevenDayWeather> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Image.network(
-                                    data.getWeatherIconOfOpenWeather(),
+                                    data.getWeatherIconOfOpenWeather ?? "",
                                     width: 70,
                                     // scale: 1.2,
                                   ),
                                   Flexible(
                                     child: Text(
-                                      data.getMainDescription(),
+                                      data.getMainDescription ?? "Unknown",
                                       textAlign: TextAlign.right,
                                       style: textStyle,
                                     ),
@@ -104,7 +105,7 @@ class _NextSevenDayWeatherState extends State<NextSevenDayWeather> {
                           ),
                           Expanded(
                             child: Text(
-                              '${data.minTemp()}°C-${data.maxTemp()}°C',
+                              '${data.minTemp}°C-${data.maxTemp}°C',
                               textAlign: TextAlign.right,
                               style: textStyle,
                             ),

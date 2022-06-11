@@ -12,7 +12,7 @@ class OtherWidgetInformation extends StatefulWidget {
 class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
   @override
   Widget build(BuildContext context) {
-    var data = CurrentOneCallOpenWeather(data: widget.data['current']);
+    var data = CurrentOneCallOpenWeather.fromJson(widget.data['current']);
 
     return Column(
       children: [
@@ -22,7 +22,7 @@ class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
             children: [
               OtherWidgetInformationCard(
                 bodyIcon: 'gauge',
-                value: data.pressure(),
+                value: data.pressure,
                 metric: 'hPA',
                 title: 'Áp suất khí quyển',
                 titleIcon: 'at_press',
@@ -42,7 +42,7 @@ class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
                       height: 5,
                     ),
                     Text(
-                      data.sunRise(),
+                      data.sunRise ?? "Unknown",
                       style: const TextStyle(
                         fontWeight: FontWeight.w900,
                         fontSize: 25,
@@ -55,7 +55,7 @@ class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
                         width: 60,
                       ),
                     ),
-                    Text('Hoàng hôn: ${data.sunSet()}'),
+                    Text('Hoàng hôn: ${data.sunSet ?? "Unknown"}'),
                   ],
                 ),
               ),
@@ -70,7 +70,7 @@ class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
           child: Row(
             children: [
               OtherWidgetInformationCard(
-                value: data.uvi(),
+                value: data.uvi,
                 title: 'Mức UV',
                 bodyIcon: 'uvi_white_black_2',
                 titleIcon: 'uv_white_black',
@@ -79,7 +79,7 @@ class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
                 width: 20,
               ),
               OtherWidgetInformationCard(
-                value: data.clouds(),
+                value: data.clouds,
                 metric: '%',
                 title: 'Mây phủ',
                 bodyIcon: 'cloud_icon',

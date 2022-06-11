@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../components/constants.dart';
 import '../components/weather_card.dart';
 import '../services/location.dart';
 import '../services/networking.dart';
@@ -34,6 +33,8 @@ class _LocationScreenState extends State<LocationScreen> {
   dynamic colorSwitchButton = Colors.yellow;
   bool darkMode = false;
   String cityName = "";
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -50,10 +51,18 @@ class _LocationScreenState extends State<LocationScreen> {
     try {
       WeatherModel weatherModel = WeatherModel();
       MyLocation getLocation;
-      if (geo == null) {
+      if (geo == null && location == null) {
         getLocation = await weatherModel.getCurrentWeatherByLocation();
       } else {
-        getLocation = await weatherModel.getCurrentWeatherByLocation(geo: geo);
+        //Ưu tiên tìm theo tên thành phố trước
+        if (geo != null) {
+          getLocation =
+              await weatherModel.getCurrentWeatherByLocation(geo: geo);
+        } else {
+          //Nếu không search theo tên thành phố, cập nhật lại dữ liệu theo vị trí hiện tại
+          getLocation = await weatherModel.getCurrentWeatherByLocation(
+              geo: {'lat': location!.latitude, 'lon': location!.longitude});
+        }
       }
 
       if (weatherModel.currentWeatherData != null &&
@@ -64,16 +73,23 @@ class _LocationScreenState extends State<LocationScreen> {
           detailedWeatherData = weatherModel.detailWeatherData;
           // cityName = currentWeatherData['name'].toUpperCase();
           location = getLocation;
-          labelUpdateButton = 'update';
+
+          if (geo == null && location == null) {
+            setState(() {
+              cityName = currentWeatherData['name'].toUpperCase();
+            });
+          } else {
+            if (geo != null) {
+              setState(() {
+                cityName = geo['name'];
+              });
+            }
+          }
         });
         return true;
       }
     } catch (e) {
       debugPrint(e.toString());
-    } finally {
-      setState(() {
-        labelUpdateButton = 'update';
-      });
     }
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -126,21 +142,19 @@ class _LocationScreenState extends State<LocationScreen> {
                   ),
                 ),
               ).then(
-                (value) {
+                (value) async {
                   if (value == null ||
                       !value.containsKey('lat') ||
                       !value.containsKey('lon')) {
                     debugPrint('null');
                   } else {
                     debugPrint(value.toString());
-                    setState(() {
-                      labelUpdateButton = 'updating...';
-                    });
-                    updateWeather(geo: value).then((updateResult) {
-                      if (updateResult == true) {
-                        cityName = value['name'];
-                      }
-                    });
+                    // updateWeather(geo: value).then((updateResult) {
+                    //   if (updateResult == true) {
+                    //     cityName = value['name'];
+                    //   }
+                    // });
+                    await updateWeather(geo: value);
                   }
                 },
               );
@@ -157,7 +171,8 @@ class _LocationScreenState extends State<LocationScreen> {
             ? const Color(0xFF0B0C1E)
             : const Color(0xDBDBF3F3),
         elevation: 0.0,
-        title: Column(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               cityName,
@@ -170,59 +185,35 @@ class _LocationScreenState extends State<LocationScreen> {
           ],
         ),
       ),
-      body: Container(
-        color: darkMode == true
-            ? const Color(0xFF0B0C1E)
-            : const Color(0xDBDBF3F3),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                ElevatedButton(
-                  style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.transparent),
-                    elevation: MaterialStateProperty.all(0.0),
+      body: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        onRefresh: () async {
+          await updateWeather();
+        },
+        child: Container(
+          color: darkMode == true
+              ? const Color(0xFF0B0C1E)
+              : const Color(0xDBDBF3F3),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: 50,
                   ),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 10,
-                      horizontal: 20,
-                    ),
-                    child: Text(labelUpdateButton),
-                    decoration: const BoxDecoration(
-                      image: kBackgroundGradient,
-                      borderRadius: BorderRadius.all(Radius.circular(18)),
-                    ),
+                  WeatherCard(
+                    data: CurrentWeatherData.fromJson(currentWeatherData),
                   ),
-                  onPressed: () {
-                    setState(() {
-                      labelUpdateButton = 'updating...';
-                    });
-                    updateWeather().then((value) {
-                      if (value == true) {
-                        setState(() {
-                          cityName = currentWeatherData['name'].toUpperCase();
-                        });
-                      }
-                    });
-                  },
-                ),
-                const SizedBox(
-                  height: 50,
-                ),
-                WeatherCard(
-                  data: CurrentWeatherData(data: currentWeatherData),
-                ),
-                AirQualityCard(
-                    data: CurrentWeatherData(data: currentWeatherData),
-                    daily: false),
-                HoursWeather(
-                    detailedWeatherData: detailedWeatherData,
-                    darkMode: darkMode),
-                OtherWidgetInformation(data: detailedWeatherData),
-              ],
+                  AirQualityCard(
+                      data: CurrentWeatherData.fromJson(currentWeatherData),
+                      daily: false),
+                  HoursWeather(
+                      detailedWeatherData: detailedWeatherData,
+                      darkMode: darkMode),
+                  OtherWidgetInformation(data: detailedWeatherData),
+                ],
+              ),
             ),
           ),
         ),

@@ -68,8 +68,10 @@ class _HoursWeatherState extends State<HoursWeather> {
               itemCount: 24,
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, int index) {
-                var data = HoursWeatherData(
-                    data: widget.detailedWeatherData['hourly'][index]);
+                var data = HoursWeatherData.fromJson(
+                    widget.detailedWeatherData['hourly'][index]);
+                debugPrint(
+                    widget.detailedWeatherData['hourly'][index].toString());
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -91,7 +93,7 @@ class _HoursWeatherState extends State<HoursWeather> {
                         children: [
                           //'°C'
                           Text(
-                            '${data.temp()}°C',
+                            '${data.temp}°C',
                             style: TextStyle(
                               color: index == 0 ? Colors.white : Colors.black,
                               fontWeight: FontWeight.bold,
@@ -103,11 +105,11 @@ class _HoursWeatherState extends State<HoursWeather> {
                           //   width: 50,
                           // ),
                           Image.network(
-                            data.getWeatherIconOfOpenWeather(),
+                            data.getWeatherIconOfOpenWeather!,
                             width: 80,
                           ),
                           Text(
-                            data.getHour() + ':00',
+                            data.getHour! + ':00',
                             style: TextStyle(
                               color: index == 0 ? Colors.white : Colors.black,
                               fontWeight: FontWeight.bold,

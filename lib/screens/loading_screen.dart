@@ -33,13 +33,15 @@ class _LoadingScreenState extends State<LoadingScreen> {
       if (weatherModel.currentWeatherData != null &&
           weatherModel.detailWeatherData != null) {
         Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (context) => LocationScreen(
-                      currentWeatherData: weatherModel.currentWeatherData,
-                      detailedWeatherData: weatherModel.detailWeatherData,
-                      location: location,
-                    )));
+          context,
+          MaterialPageRoute(
+            builder: (context) => LocationScreen(
+              currentWeatherData: weatherModel.currentWeatherData,
+              detailedWeatherData: weatherModel.detailWeatherData,
+              location: location,
+            ),
+          ),
+        );
       } else {
         Navigator.pushReplacement(
             context,
