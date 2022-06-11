@@ -1,3 +1,4 @@
+import 'package:climate_app/services/list_chose_city.dart';
 import 'package:flutter/material.dart';
 import '../components/weather_card.dart';
 import '../services/location.dart';
@@ -44,7 +45,21 @@ class _LocationScreenState extends State<LocationScreen> {
     detailedWeatherData = widget.detailedWeatherData;
     location = widget.location;
     cityName = currentWeatherData['name'].toUpperCase();
-    debugPrint(widget.detailedWeatherData.toString());
+    // CityList.delAll();
+    CityList.saveCity(
+      MyCity(
+        lat: location!.latitude!,
+        lon: location!.longitude!,
+        name: cityName,
+        myLocation: true,
+      ),
+    );
+    // debugPrint(widget.detailedWeatherData.toString());
+    CityList.readCityList().then((value) {
+      for (int i = 0; i < value.length; i++) {
+        debugPrint('${value[i].name} ${value[i].lat} ${value[i].lon}');
+      }
+    });
   }
 
   Future<bool> updateWeather({Map<String, dynamic>? geo}) async {
@@ -142,19 +157,21 @@ class _LocationScreenState extends State<LocationScreen> {
                   ),
                 ),
               ).then(
-                (value) async {
+                (value) {
                   if (value == null ||
                       !value.containsKey('lat') ||
                       !value.containsKey('lon')) {
                     debugPrint('null');
                   } else {
                     debugPrint(value.toString());
-                    // updateWeather(geo: value).then((updateResult) {
-                    //   if (updateResult == true) {
-                    //     cityName = value['name'];
-                    //   }
-                    // });
-                    await updateWeather(geo: value);
+                    updateWeather(geo: value);
+                    CityList.saveCity(
+                      MyCity(
+                          lat: value['lat'],
+                          lon: value['lon'],
+                          name: value['name'],
+                          myLocation: false),
+                    );
                   }
                 },
               );

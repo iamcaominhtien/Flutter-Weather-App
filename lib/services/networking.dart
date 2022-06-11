@@ -123,21 +123,26 @@ class CurrentWeatherData {
       sunSet,
       getDate,
       getDescription,
+      getWeatherIconOfOpenWeather,
       getWeatherIcon;
   int? temp, feelLike;
+  DateTime? dateTime;
 
-  CurrentWeatherData(
-      {this.windSpeed,
-      this.getWeatherIcon,
-      this.feelLike,
-      this.temp,
-      this.getDescription,
-      this.visibility,
-      this.getDate,
-      this.humidity,
-      this.sunSet,
-      this.sunRise,
-      this.pressure});
+  CurrentWeatherData({
+    this.windSpeed,
+    this.getWeatherIcon,
+    this.feelLike,
+    this.temp,
+    this.getDescription,
+    this.visibility,
+    this.getDate,
+    this.humidity,
+    this.sunSet,
+    this.sunRise,
+    this.pressure,
+    this.dateTime,
+    this.getWeatherIconOfOpenWeather,
+  });
 
   factory CurrentWeatherData.fromJson(Map<String, dynamic> data) {
     return CurrentWeatherData(
@@ -163,10 +168,14 @@ class CurrentWeatherData {
         DateTime.fromMillisecondsSinceEpoch(data['dt'].toInt() * 1000,
             isUtc: false),
       ),
+      dateTime: DateTime.fromMillisecondsSinceEpoch(data['dt'].toInt() * 1000,
+          isUtc: false),
       getDescription:
           UsefulFunction.capitalize(data['weather'][0]['description']),
       getWeatherIcon:
           WeatherModel.getWeatherIcon(data['weather'][0]['id'].toInt()),
+      getWeatherIconOfOpenWeather:
+          "http://openweathermap.org/img/wn/${data['weather'][0]['icon']}@2x.png",
     );
   }
 }
