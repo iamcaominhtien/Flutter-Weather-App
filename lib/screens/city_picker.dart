@@ -29,15 +29,30 @@ class CityPicker extends StatefulWidget {
 
 class _CityPickerState extends State<CityPicker> {
   // List<String> searchList = [];
+  List<MyCity>? listCity;
 
   Future<String> _loadFromAsset() async {
     return await rootBundle.loadString("assets/cities.json");
   }
 
-  Future parseJson() async {
+  Future<dynamic> parseJson() async {
     String jsonString = await _loadFromAsset();
-    jsonResponse = jsonDecode(jsonString);
-    return jsonResponse;
+    // jsonResponse = jsonDecode(jsonString);
+    return jsonDecode(jsonString);
+  }
+
+  Future<int?> _loading() async {
+    try {
+      jsonResponse = await parseJson();
+      listCity = await CityList.readCityList();
+      if (jsonResponse != null && listCity != null) {
+        return 1;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return Future.error(e);
+    }
   }
 
   @override
@@ -48,69 +63,69 @@ class _CityPickerState extends State<CityPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<dynamic>(
+    return FutureBuilder<int?>(
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Scaffold(
-            // backgroundColor: ,
+            backgroundColor:
+                widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.white,
             body: Center(
-              child: Text(snapshot.error.toString()),
+              child: Text(
+                snapshot.error.toString(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: widget.darkTheme ? Colors.white : Colors.black,
+                ),
+              ),
             ),
           );
         }
         if (!snapshot.hasData) {
-          return const Scaffold(
-              body: Center(
-            child: CircularProgressIndicator(),
-          ));
+          return Scaffold(
+              backgroundColor:
+                  widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.white,
+              body: const Center(
+                child: SpinKitDoubleBounce(
+                  color: Colors.blue,
+                  size: 100,
+                ),
+              ));
         }
-        // dynamic data = snapshot.data;
-        return Scaffold(
-          backgroundColor:
-              widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.white,
-          appBar: AppBar(
-            backgroundColor:
-                widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.blue,
-            title: const Text('Search'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  showSearch(
-                          context: context,
-                          delegate: MySearch(
-                              popContext: context, jsonResponse: jsonResponse))
-                      .then((value) {
-                    debugPrint(value);
-                  });
-                },
-              )
-            ],
-          ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: FutureBuilder<List<MyCity>>(
-              future: CityList.readCityList(),
-              builder: (context, snapShot) {
-                if (snapShot.hasError) {
-                  return const Center(
-                    child: Text('Lỗi khi tải dữ liệu'),
-                  );
-                }
-                if (!snapShot.hasData) {
-                  return Center(
-                    child: SpinKitDoubleBounce(),
-                  );
-                }
-                var data = snapShot.data;
-                return ListView.builder(
-                  itemCount: data!.length,
-                  itemBuilder: (context, index) {
-                    var item = data[index];
-                    var weatherData = CurrentWeatherData.fromJson(
-                        data[index].currentWeatherData);
 
-                    return Container(
+        return Scaffold(
+            backgroundColor:
+                widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.white,
+            appBar: AppBar(
+              backgroundColor:
+                  widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.blue,
+              title: const Text('Search'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(
+                      context: context,
+                      delegate: MySearch(
+                          popContext: context,
+                          jsonResponse: jsonResponse,
+                          darkTheme: widget.darkTheme),
+                    ).then((value) {
+                      debugPrint(value);
+                    });
+                  },
+                )
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: ListView.builder(
+                itemCount: listCity!.length,
+                itemBuilder: (context, index) {
+                  var item = listCity![index];
+                  var weatherData = CurrentWeatherData.fromJson(
+                      listCity![index].currentWeatherData);
+
+                  return Container(
                       height: 100,
                       margin: const EdgeInsets.symmetric(
                           vertical: 7, horizontal: 15),
@@ -119,58 +134,74 @@ class _CityPickerState extends State<CityPicker> {
                         borderRadius: BorderRadius.all(
                           Radius.circular(20.0),
                         ),
-                        color: Color(0xFF5564F0),
+                        // color: null,
                         image: kBackgroundGradient,
                       ),
-                      // padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      child: item.myLocation
-                          ? ListCityItemCardChild(
-                              item: item, weatherData: weatherData)
-                          : Slidable(
-                              key: const ValueKey(0),
-                              endActionPane: ActionPane(
-                                motion: const ScrollMotion(),
-                                children: [
-                                  Theme(
-                                    data: ThemeData(
-                                      iconTheme:
-                                          const IconThemeData(size: 40.0),
-                                    ),
-                                    child: SlidableAction(
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(20.0),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(EdgeInsets.zero),
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.transparent),
+                          shape: MaterialStateProperty.all(
+                            const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context, {
+                            'lat': item.lat,
+                            'lon': item.lon,
+                            'name': item.name
+                          });
+                        },
+                        child: item.myLocation
+                            ? ListCityItemCardChild(
+                                item: item, weatherData: weatherData)
+                            : Slidable(
+                                key: const ValueKey(0),
+                                endActionPane: ActionPane(
+                                  extentRatio: 0.5,
+                                  motion: const StretchMotion(),
+                                  children: [
+                                    Theme(
+                                      data: ThemeData(
+                                        iconTheme:
+                                            const IconThemeData(size: 40.0),
                                       ),
-                                      onPressed: (context) {
-                                        setState(() {
-                                          CityList.delCity(item)
-                                              .whenComplete(() {
-                                            setState(() {
-                                              data.remove(item);
+                                      child: SlidableAction(
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(20.0),
+                                        ),
+                                        onPressed: (context) {
+                                          setState(() {
+                                            CityList.delCity(item)
+                                                .whenComplete(() {
+                                              setState(() {
+                                                listCity!.remove(item);
+                                              });
                                             });
                                           });
-                                        });
-                                      },
-                                      backgroundColor: Colors.red,
-                                      foregroundColor: Colors.white,
-                                      icon: Icons.delete_forever,
-                                      // label: 'Save',
+                                        },
+                                        backgroundColor: Colors.red,
+                                        foregroundColor: Colors.white,
+                                        icon: Icons.delete_forever,
+                                        // label: 'Save',
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                                child: ListCityItemCardChild(
+                                    item: item, weatherData: weatherData),
                               ),
-                              child: ListCityItemCardChild(
-                                  item: item, weatherData: weatherData),
-                            ),
-                    );
-                  },
-                );
-              },
-            ),
-          ),
-        );
-        // return Container();
+                      ));
+                },
+              ),
+            ));
       },
-      future: parseJson(),
+      future: _loading(),
     );
   }
 }

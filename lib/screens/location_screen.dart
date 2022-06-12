@@ -55,6 +55,7 @@ class _LocationScreenState extends State<LocationScreen> {
       ),
     );
     // debugPrint(widget.detailedWeatherData.toString());
+    debugPrint("here");
     CityList.readCityList().then((value) {
       for (int i = 0; i < value.length; i++) {
         debugPrint('${value[i].name} ${value[i].lat} ${value[i].lon}');
@@ -162,6 +163,12 @@ class _LocationScreenState extends State<LocationScreen> {
                       !value.containsKey('lat') ||
                       !value.containsKey('lon')) {
                     debugPrint('null');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('No data'),
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
                   } else {
                     debugPrint(value.toString());
                     updateWeather(geo: value);

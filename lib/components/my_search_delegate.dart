@@ -27,19 +27,34 @@ class MySearch extends SearchDelegate {
 
   BuildContext? popContext;
   final dynamic jsonResponse;
+  final bool? darkTheme;
 
-  MySearch({this.popContext,required this.jsonResponse});
+  MySearch({this.popContext, required this.jsonResponse, this.darkTheme});
 
   Map<String, dynamic> geo = {};
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    // TODO: implement appBarTheme
+    return ThemeData(
+      textTheme: TextTheme(
+          headline6: TextStyle(
+              color: darkTheme == true ? Colors.white : Colors.black)),
+      hintColor: darkTheme == true ? Colors.white : Colors.black,
+      appBarTheme: AppBarTheme(
+        color: darkTheme == true ? const Color(0xFF0B0C1E) : Colors.white,
+      ),
+    );
+  }
 
   @override
   Widget? buildLeading(BuildContext context) {
     // TODO: implement buildLeading
     return IconButton(
       onPressed: () => close(context, null),
-      icon: const Icon(
+      icon: Icon(
         Icons.arrow_back,
-        color: Colors.black,
+        color: darkTheme == true ? Colors.white : Colors.black,
       ),
     );
   }
@@ -49,20 +64,27 @@ class MySearch extends SearchDelegate {
     // TODO: implement buildSuggestions
     var sug = searchItem(query);
 
-    return ListView.builder(
-      itemBuilder: (context, index) {
-        return ListTile(
-          onTap: () {
-            query = sug[index]['name'];
-            geo['lat'] = double.parse(sug[index]['lat']);
-            geo['lon'] = double.parse(sug[index]['lon']);
-            geo['name'] = sug[index]['name'];
-            showResults(context);
-          },
-          title: Text(sug[index]['name']),
-        );
-      },
-      itemCount: sug.length,
+    return Container(
+      color: darkTheme == true ? const Color(0xFF0B0C1E) : Colors.white,
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+          return ListTile(
+            onTap: () {
+              query = sug[index]['name'];
+              geo['lat'] = double.parse(sug[index]['lat']);
+              geo['lon'] = double.parse(sug[index]['lon']);
+              geo['name'] = sug[index]['name'];
+              showResults(context);
+            },
+            title: Text(
+              sug[index]['name'],
+              style: TextStyle(
+                  color: darkTheme == true ? Colors.white : Colors.black),
+            ),
+          );
+        },
+        itemCount: sug.length,
+      ),
     );
   }
 
@@ -80,8 +102,10 @@ class MySearch extends SearchDelegate {
             Navigator.pop(popContext!, geo);
           }
         },
-        icon:
-            query.isEmpty ? const Icon(Icons.clear) : const Icon(Icons.search),
+        icon: Icon(
+          query.isEmpty ? Icons.clear : Icons.search,
+          color: darkTheme == true ? Colors.white : Colors.black,
+        ),
       )
     ];
   }
@@ -90,6 +114,8 @@ class MySearch extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     // TODO: implement buildResults
     // throw UnimplementedError();
-    return Container();
+    return Container(
+      color: darkTheme == true ? const Color(0xFF0B0C1E) : Colors.white,
+    );
   }
 }
