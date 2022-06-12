@@ -53,14 +53,17 @@ class _LocationScreenState extends State<LocationScreen> {
         name: cityName,
         myLocation: true,
       ),
-    );
-    // debugPrint(widget.detailedWeatherData.toString());
-    debugPrint("here");
-    CityList.readCityList().then((value) {
-      for (int i = 0; i < value.length; i++) {
-        debugPrint('${value[i].name} ${value[i].lat} ${value[i].lon}');
-      }
+    ).then((res) {
+      debugPrint(res.toString());
+
+      debugPrint("here");
+      CityList.readCityList().then((value) {
+        for (int i = 0; i < value.length; i++) {
+          debugPrint('${value[i].name} ${value[i].lat} ${value[i].lon}');
+        }
+      });
     });
+    // debugPrint(widget.detailedWeatherData.toString());
   }
 
   Future<bool> updateWeather({Map<String, dynamic>? geo}) async {
@@ -163,12 +166,14 @@ class _LocationScreenState extends State<LocationScreen> {
                       !value.containsKey('lat') ||
                       !value.containsKey('lon')) {
                     debugPrint('null');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('No data'),
-                        duration: Duration(seconds: 3),
-                      ),
-                    );
+                    if (value != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Failed search'),
+                          duration: Duration(seconds: 3),
+                        ),
+                      );
+                    }
                   } else {
                     debugPrint(value.toString());
                     updateWeather(geo: value);
@@ -195,18 +200,16 @@ class _LocationScreenState extends State<LocationScreen> {
             ? const Color(0xFF0B0C1E)
             : const Color(0xDBDBF3F3),
         elevation: 0.0,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              cityName,
-              style: TextStyle(
-                color: darkMode == true ? Colors.white : Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 25,
-              ),
+        title: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Text(
+            cityName,
+            style: TextStyle(
+              color: darkMode == true ? Colors.white : Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 25,
             ),
-          ],
+          ),
         ),
       ),
       body: RefreshIndicator(

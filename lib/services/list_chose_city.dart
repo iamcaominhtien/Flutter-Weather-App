@@ -41,7 +41,7 @@ class CityList {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     List<String>? listCity = sharedPreferences.getStringList(keyCityList);
 
-    if (listCity == null) {
+    if (listCity == null || listCity.isEmpty) {
       return await sharedPreferences
           .setStringList(keyCityList, [jsonEncode(city)]);
     } else {
