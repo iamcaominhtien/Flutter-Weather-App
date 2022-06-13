@@ -61,11 +61,23 @@ class _LoadingScreenState extends State<LoadingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.white,
-      body: SpinKitWave(
-        color: Colors.blue,
-        size: 100,
+    return Container(
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/sunny.jfif'),
+            colorFilter: ColorFilter.mode(Colors.blue, BlendMode.modulate),
+            fit: BoxFit.fill,
+          ),
+          // color: Colors.black.withOpacity(1),
+        ),
+      child: const Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Center(
+          child: SpinKitPouringHourGlassRefined(
+            color: Colors.white,
+            size: 300,
+          ),
+        ),
       ),
     );
   }

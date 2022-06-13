@@ -32,30 +32,51 @@ class _HomePageState extends State<HomePage> {
                 'assets/cloudy.png',
                 width: 200,
               ),
-              RichText(
-                textAlign: TextAlign.center,
-                text: const TextSpan(
-                  style: TextStyle(
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    fontSize: 40,
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Text(
+                    'Weather',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: Colors.white,
+                      fontSize: 40,
+                    ),
                   ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'Weather',
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
+                  Text(
+                    'News & Feed',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: Colors.orange,
+                      fontSize: 40,
                     ),
-                    TextSpan(
-                      text: ' News & Feed',
-                      style: TextStyle(
-                        color: Colors.orange,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
+              // RichText(
+              //   textAlign: TextAlign.center,
+              //   text: const TextSpan(
+              //     style: TextStyle(
+              //       fontWeight: FontWeight.w900,
+              //       color: Colors.white,
+              //       fontSize: 40,
+              //     ),
+              //     children: <TextSpan>[
+              //       TextSpan(
+              //         text: 'Weather',
+              //         style: TextStyle(
+              //           color: Colors.white,
+              //         ),
+              //       ),
+              //       TextSpan(
+              //         text: ' News & Feed',
+              //         style: TextStyle(
+              //           color: Colors.orange,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               const Text(
                 'Đưa ra các dự báo về thời tiết theo giờ và theo ngày',
                 style: TextStyle(
