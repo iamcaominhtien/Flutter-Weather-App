@@ -33,6 +33,7 @@ class _LocationScreenState extends State<LocationScreen> {
   IconData switchButton = Icons.light_mode;
   dynamic colorSwitchButton = Colors.yellow;
   bool darkMode = false;
+  bool myLocation = true;
   String cityName = "";
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
@@ -91,7 +92,6 @@ class _LocationScreenState extends State<LocationScreen> {
           debugPrint(weatherModel.detailWeatherData.toString());
           detailedWeatherData = weatherModel.detailWeatherData;
           // cityName = currentWeatherData['name'].toUpperCase();
-          location = getLocation;
 
           if (geo == null && location == null) {
             setState(() {
@@ -104,6 +104,7 @@ class _LocationScreenState extends State<LocationScreen> {
               });
             }
           }
+          location = getLocation;
         });
         return true;
       }
@@ -121,7 +122,6 @@ class _LocationScreenState extends State<LocationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    NavigatorState navigator = Navigator.of(context);
     return Scaffold(
       // extendBody: true,
       appBar: AppBar(
@@ -147,21 +147,19 @@ class _LocationScreenState extends State<LocationScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              CapturedThemes themes =
-                  InheritedTheme.capture(from: context, to: navigator.context);
+              // CapturedThemes themes =
+              //     InheritedTheme.capture(from: context, to: navigator.context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => themes.wrap(
-                    CityPicker(
-                      latitude: location?.latitude ?? 0,
-                      longtitude: location?.longitude ?? 0,
-                      darkTheme: darkMode,
-                    ),
+                  builder: (context) => CityPicker(
+                    latitude: location?.latitude ?? 0,
+                    longtitude: location?.longitude ?? 0,
+                    darkTheme: darkMode,
                   ),
                 ),
               ).then(
-                (value) {
+                (value) async {
                   if (value == null ||
                       !value.containsKey('lat') ||
                       !value.containsKey('lon')) {
@@ -176,14 +174,25 @@ class _LocationScreenState extends State<LocationScreen> {
                     }
                   } else {
                     debugPrint(value.toString());
-                    updateWeather(geo: value);
-                    CityList.saveCity(
-                      MyCity(
+                    myLocation = value['myLocation'];
+                    bool updateSuccess = false;
+                    if (myLocation == false) {
+                      updateSuccess = await updateWeather(geo: value);
+                    } else {
+                      location = null;
+                      updateSuccess = await updateWeather();
+                    }
+                    if (updateSuccess == true) {
+                      debugPrint(value['myLocation'].toString());
+                      CityList.saveCity(
+                        MyCity(
                           lat: value['lat'],
                           lon: value['lon'],
                           name: value['name'],
-                          myLocation: false),
-                    );
+                          myLocation: value['myLocation'],
+                        ),
+                      );
+                    }
                   }
                 },
               );
@@ -215,6 +224,9 @@ class _LocationScreenState extends State<LocationScreen> {
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: () async {
+          if (myLocation == true) {
+            location = null;
+          }
           await updateWeather();
         },
         child: Container(

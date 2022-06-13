@@ -74,6 +74,7 @@ class MySearch extends SearchDelegate {
               geo['lat'] = double.parse(sug[index]['lat']);
               geo['lon'] = double.parse(sug[index]['lon']);
               geo['name'] = sug[index]['name'];
+              geo['myLocation'] = false;
               // showResults(context);
               query = '';
               close(context, query);

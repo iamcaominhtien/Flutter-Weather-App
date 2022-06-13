@@ -165,8 +165,9 @@ class _CityPickerState extends State<CityPicker> {
                             Navigator.pop(context, {
                               'lat': item.lat,
                               'lon': item.lon,
-                              'name': item.name
-                            });
+                              'name': item.name,
+                              'myLocation':listCity![index].myLocation,
+                            },);
                           },
                           child: item.myLocation
                               ? ListCityItemCardChild(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'weather.dart';
@@ -47,7 +48,20 @@ class CityList {
           .setStringList(keyCityList, [jsonEncode(city)]);
     } else {
       if (!listCity.contains(jsonEncode(city))) {
-        listCity.add(jsonEncode(city));
+        if (city.myLocation == true) {
+          // for (int i = 0; i < listCity.length; i++) {
+          //   var _city = MyCity.fromJson(
+          //       jsonDecode(listCity[i]) as Map<String, dynamic>);
+          //   if (_city.myLocation == true) {
+          //     listCity[i] = jsonEncode(city);
+          //     debugPrint(i.toString());
+          //     break;
+          //   }
+          // }
+          listCity[0] = jsonEncode(city);
+        } else {
+          listCity.add(jsonEncode(city));
+        }
         return await sharedPreferences.setStringList(keyCityList, listCity);
       }
       return true;
