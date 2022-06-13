@@ -70,11 +70,14 @@ class MySearch extends SearchDelegate {
         itemBuilder: (context, index) {
           return ListTile(
             onTap: () {
-              query = sug[index]['name'];
+              // query = sug[index]['name'];
               geo['lat'] = double.parse(sug[index]['lat']);
               geo['lon'] = double.parse(sug[index]['lon']);
               geo['name'] = sug[index]['name'];
-              showResults(context);
+              // showResults(context);
+              query = '';
+              close(context, query);
+              Navigator.pop(popContext!, geo);
             },
             title: Text(
               sug[index]['name'],

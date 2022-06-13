@@ -93,10 +93,10 @@ class _CityPickerState extends State<CityPicker> {
         }
 
         return Container(
-          decoration: const BoxDecoration(
+          decoration:  BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/sunny.jfif'),
-              colorFilter: ColorFilter.mode(Colors.blue, BlendMode.modulate),
+              image: const AssetImage('assets/sunny.jfif'),
+              colorFilter: widget.darkTheme==true?const ColorFilter.mode(Colors.blue, BlendMode.modulate):null,
               fit: BoxFit.fill,
             ),
             // color: Colors.black.withOpacity(1),

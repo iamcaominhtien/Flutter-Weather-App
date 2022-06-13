@@ -40,6 +40,7 @@ class CityList {
   static Future<bool> saveCity(MyCity city) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     List<String>? listCity = sharedPreferences.getStringList(keyCityList);
+    city.currentWeatherData = null;
 
     if (listCity == null || listCity.isEmpty) {
       return await sharedPreferences
