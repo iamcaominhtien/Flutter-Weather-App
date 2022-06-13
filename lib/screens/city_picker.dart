@@ -70,12 +70,33 @@ class _CityPickerState extends State<CityPicker> {
             backgroundColor:
                 widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.white,
             body: Center(
-              child: Text(
-                snapshot.error.toString(),
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: widget.darkTheme ? Colors.white : Colors.black,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    'Sorry, something went wrong',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  Image.asset(
+                    'assets/error.png',
+                    color: widget.darkTheme ? Colors.white : Colors.black,
+                    width: 200,
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Go back'),
+                  ),
+                ],
               ),
             ),
           );
@@ -93,10 +114,12 @@ class _CityPickerState extends State<CityPicker> {
         }
 
         return Container(
-          decoration:  BoxDecoration(
+          decoration: BoxDecoration(
             image: DecorationImage(
               image: const AssetImage('assets/sunny.jfif'),
-              colorFilter: widget.darkTheme==true?const ColorFilter.mode(Colors.blue, BlendMode.modulate):null,
+              colorFilter: widget.darkTheme == true
+                  ? const ColorFilter.mode(Colors.blue, BlendMode.modulate)
+                  : null,
               fit: BoxFit.fill,
             ),
             // color: Colors.black.withOpacity(1),
@@ -162,12 +185,15 @@ class _CityPickerState extends State<CityPicker> {
                             ),
                           ),
                           onPressed: () {
-                            Navigator.pop(context, {
-                              'lat': item.lat,
-                              'lon': item.lon,
-                              'name': item.name,
-                              'myLocation':listCity![index].myLocation,
-                            },);
+                            Navigator.pop(
+                              context,
+                              {
+                                'lat': item.lat,
+                                'lon': item.lon,
+                                'name': item.name,
+                                'myLocation': listCity![index].myLocation,
+                              },
+                            );
                           },
                           child: item.myLocation
                               ? ListCityItemCardChild(
