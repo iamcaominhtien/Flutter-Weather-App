@@ -43,7 +43,10 @@ class WeatherModel {
     String url;
     //Get current weather
     if (geo == null) {
+      //Lấy dữ liệu vị trí
       if (await location.getCurrentLocation() == true) {
+        //MyLocation location = MyLocation();
+        //location.latitude, location.lontitude. location.getCurrrentLocation
         debugPrint(location.longitude.toString());
         debugPrint(location.latitude.toString());
 

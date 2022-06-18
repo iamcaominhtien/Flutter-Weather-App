@@ -21,6 +21,7 @@ class MyLocation {
 
     _permissionGranted = await location.hasPermission();
     if (_permissionGranted == PermissionStatus.denied) {
+      //Yêu cầu lại quyền một lần nữa. 
       _permissionGranted = await location.requestPermission();
       if (_permissionGranted != PermissionStatus.granted) {
         return false;

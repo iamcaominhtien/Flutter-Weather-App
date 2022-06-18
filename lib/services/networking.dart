@@ -6,6 +6,7 @@ import 'weather.dart';
 
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 class NetworkingHelper {
+  //Api
   final String url;
   NetworkingHelper({
     required this.url,
@@ -14,8 +15,15 @@ class NetworkingHelper {
   Future getData() async {
     http.Response response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
+      //Lấy dữ liệu thành công
+      //response.body: String
+      //encode: mã hóa
+      //decode: giải mã hóa
       return jsonDecode(response.body);
     }
+    //Trả về lỗi: 404: lấy dữ liệu không thành công
+    //lấy được dữ liệu: -> json kiểu dynamic
+    //không lấy được dữ liệu: trả về một con số
     return response.statusCode;
   }
 }
@@ -122,6 +130,7 @@ class CurrentWeatherData {
       sunRise,
       sunSet,
       getDate,
+      getCityName,
       getDescription,
       getWeatherIconOfOpenWeather,
       getWeatherIcon;
@@ -141,6 +150,7 @@ class CurrentWeatherData {
     this.sunRise,
     this.pressure,
     this.dateTime,
+    this.getCityName,
     this.getWeatherIconOfOpenWeather,
   });
 
@@ -172,6 +182,7 @@ class CurrentWeatherData {
           isUtc: false),
       getDescription:
           UsefulFunction.capitalize(data['weather'][0]['description']),
+      getCityName: data['name'],
       getWeatherIcon:
           WeatherModel.getWeatherIcon(data['weather'][0]['id'].toInt()),
       getWeatherIconOfOpenWeather:

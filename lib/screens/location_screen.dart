@@ -35,6 +35,7 @@ class _LocationScreenState extends State<LocationScreen> {
   bool darkMode = false;
   bool myLocation = true;
   String cityName = "";
+  CurrentWeatherData? data;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
@@ -45,7 +46,8 @@ class _LocationScreenState extends State<LocationScreen> {
     currentWeatherData = widget.currentWeatherData;
     detailedWeatherData = widget.detailedWeatherData;
     location = widget.location;
-    cityName = currentWeatherData['name'].toUpperCase();
+    data = CurrentWeatherData.fromJson(currentWeatherData);
+    cityName = data!.getCityName ?? "Unknown";
     // CityList.delAll();
     CityList.saveCity(
       MyCity(
@@ -95,7 +97,9 @@ class _LocationScreenState extends State<LocationScreen> {
 
           if (geo == null && location == null) {
             setState(() {
-              cityName = currentWeatherData['name'].toUpperCase();
+              data = CurrentWeatherData.fromJson(currentWeatherData);
+              cityName = data!.getCityName ?? "Unknown".toUpperCase();
+              // cityName = currentWeatherData['name'].toUpperCase();
             });
           } else {
             if (geo != null) {
@@ -132,6 +136,9 @@ class _LocationScreenState extends State<LocationScreen> {
             color: colorSwitchButton,
           ),
           onPressed: () {
+            //bấm vô: đổi icon(mặt trời -> mặt trăng; mặt trăng -> mặt trời)
+            //setState()
+            //đổi giả trị cho switchButton:
             setState(() {
               if (switchButton == Icons.light_mode) {
                 switchButton = Icons.dark_mode;
@@ -212,7 +219,7 @@ class _LocationScreenState extends State<LocationScreen> {
         title: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Text(
-            cityName,
+            cityName.toUpperCase(),
             style: TextStyle(
               color: darkMode == true ? Colors.white : Colors.black,
               fontWeight: FontWeight.bold,
