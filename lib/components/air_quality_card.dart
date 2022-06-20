@@ -38,7 +38,7 @@ class _AirQualityCardState extends State<AirQualityCard> {
                 ? WidgetItem(
                     label: 'Tầm nhìn xa',
                     img: 'eye',
-                    data: data.humidity + "km",
+                    data: data.visibility + "km",
                   )
                 : WidgetItem(
                     label: 'Mức UV',
