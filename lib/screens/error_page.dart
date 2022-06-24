@@ -1,5 +1,5 @@
+import 'package:climate_app/services/useful_func.dart';
 import 'package:flutter/material.dart';
-
 import '../services/weather.dart';
 import 'location_screen.dart';
 
@@ -19,12 +19,8 @@ class ErrorPage extends StatelessWidget {
           Image.asset('assets/error_page.png'),
           ElevatedButton(
             onPressed: () async {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Trying again...'),
-                  duration: Duration(seconds: 6000),
-                ),
-              );
+              UsefulFunction.showSnackBar(
+                  context: context, message: 'Trying again...', seconds: 6000);
               var weatherModel = WeatherModel();
               await weatherModel.getCurrentWeatherByLocation().then((value) {
                 if (weatherModel.currentWeatherData != null &&
@@ -42,22 +38,14 @@ class ErrorPage extends StatelessWidget {
                   );
                 } else {
                   ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Failed again'),
-                      duration: Duration(seconds: 3),
-                    ),
-                  );
+                  UsefulFunction.showSnackBar(
+                      context: context, message: 'Failed again');
                 }
               }).catchError((onError) {
                 debugPrint(onError.toString());
                 ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Failed again'),
-                    duration: Duration(seconds: 3),
-                  ),
-                );
+                UsefulFunction.showSnackBar(
+                      context: context, message: 'Failed again');
               });
             },
             child: const Text(

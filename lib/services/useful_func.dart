@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class UsefulFunction {
@@ -15,12 +17,35 @@ class UsefulFunction {
 
   static String getHourAndMinute([DateTime? date, bool? hour24]) {
     if (date == null) {
-      return DateFormat('${hour24==true?'HH':'hh'}:mm').format(DateTime.now());
+      return DateFormat('${hour24 == true ? 'HH' : 'hh'}:mm')
+          .format(DateTime.now());
     }
-    return DateFormat('${hour24==true?'HH':'hh'}:mm').format(date);
+    return DateFormat('${hour24 == true ? 'HH' : 'hh'}:mm').format(date);
   }
 
   static String getDayOfWeek(DateTime date) {
     return DateFormat('EEEE').format(date);
+  }
+
+  static void pushReplacement(
+      {required BuildContext context, required Widget page}) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => page,
+      ),
+    );
+  }
+
+  static showSnackBar(
+      {required BuildContext context,
+      required String message,
+      int seconds = 3}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: seconds),
+      ),
+    );
   }
 }

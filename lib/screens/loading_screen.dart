@@ -1,8 +1,8 @@
+import 'package:climate_app/services/useful_func.dart';
 import 'package:climate_app/services/weather.dart';
 import '../services/location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-
 import 'error_page.dart';
 import 'location_screen.dart';
 
@@ -29,33 +29,23 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Future getCurrentWeatherData() async {
     try {
       var location = await weatherModel.getCurrentWeatherByLocation();
-      // debugPrint(weatherModel.currentWeatherData.toString());
       if (weatherModel.currentWeatherData != null &&
           weatherModel.detailWeatherData != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LocationScreen(
-              currentWeatherData: weatherModel.currentWeatherData,
-              detailedWeatherData: weatherModel.detailWeatherData,
-              location: location,
-            ),
+        UsefulFunction.pushReplacement(
+          context: context,
+          page: LocationScreen(
+            currentWeatherData: weatherModel.currentWeatherData,
+            detailedWeatherData: weatherModel.detailWeatherData,
+            location: location,
           ),
         );
       } else {
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ErrorPage(),
-            ));
+        UsefulFunction.pushReplacement(
+            context: context, page: const ErrorPage());
       }
     } catch (e) {
       debugPrint(e.toString());
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ErrorPage(),
-          ));
+      UsefulFunction.pushReplacement(context: context, page: const ErrorPage());
     }
   }
 
@@ -63,13 +53,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/sunny.jfif'),
-            colorFilter: ColorFilter.mode(Colors.blue, BlendMode.modulate),
-            fit: BoxFit.fill,
-          ),
-          // color: Colors.black.withOpacity(1),
+        image: DecorationImage(
+          image: AssetImage('assets/sunny.jfif'),
+          colorFilter: ColorFilter.mode(Colors.blue, BlendMode.modulate),
+          fit: BoxFit.fill,
         ),
+        // color: Colors.black.withOpacity(1),
+      ),
       child: const Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(

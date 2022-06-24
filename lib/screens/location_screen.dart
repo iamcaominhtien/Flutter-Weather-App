@@ -1,4 +1,5 @@
 import 'package:climate_app/services/list_chose_city.dart';
+import 'package:climate_app/services/useful_func.dart';
 import 'package:flutter/material.dart';
 import '../components/weather_card.dart';
 import '../services/location.dart';
@@ -29,7 +30,6 @@ class _LocationScreenState extends State<LocationScreen> {
   var weatherModel = WeatherModel();
   dynamic currentWeatherData;
   dynamic detailedWeatherData;
-  String labelUpdateButton = "update";
   IconData switchButton = Icons.light_mode;
   dynamic colorSwitchButton = Colors.yellow;
   bool darkMode = false;
@@ -91,15 +91,12 @@ class _LocationScreenState extends State<LocationScreen> {
           weatherModel.detailWeatherData != null) {
         setState(() {
           currentWeatherData = weatherModel.currentWeatherData;
-          debugPrint(weatherModel.detailWeatherData.toString());
           detailedWeatherData = weatherModel.detailWeatherData;
-          // cityName = currentWeatherData['name'].toUpperCase();
 
           if (geo == null && location == null) {
             setState(() {
               data = CurrentWeatherData.fromJson(currentWeatherData);
               cityName = data!.getCityName ?? "Unknown".toUpperCase();
-              // cityName = currentWeatherData['name'].toUpperCase();
             });
           } else {
             if (geo != null) {
@@ -115,12 +112,7 @@ class _LocationScreenState extends State<LocationScreen> {
     } catch (e) {
       debugPrint(e.toString());
     }
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Failed update'),
-        duration: Duration(seconds: 3),
-      ),
-    );
+    UsefulFunction.showSnackBar(context: context, message: 'Failed update');
     return false;
   }
 
@@ -136,9 +128,6 @@ class _LocationScreenState extends State<LocationScreen> {
             color: colorSwitchButton,
           ),
           onPressed: () {
-            //bấm vô: đổi icon(mặt trời -> mặt trăng; mặt trăng -> mặt trời)
-            //setState()
-            //đổi giả trị cho switchButton:
             setState(() {
               if (switchButton == Icons.light_mode) {
                 switchButton = Icons.dark_mode;
@@ -154,8 +143,6 @@ class _LocationScreenState extends State<LocationScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              // CapturedThemes themes =
-              //     InheritedTheme.capture(from: context, to: navigator.context);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -170,14 +157,9 @@ class _LocationScreenState extends State<LocationScreen> {
                   if (value == null ||
                       !value.containsKey('lat') ||
                       !value.containsKey('lon')) {
-                    debugPrint('null');
                     if (value != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Failed search'),
-                          duration: Duration(seconds: 3),
-                        ),
-                      );
+                      UsefulFunction.showSnackBar(
+                          context: context, message: 'Failed search');
                     }
                   } else {
                     debugPrint(value.toString());

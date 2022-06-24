@@ -125,119 +125,97 @@ class _CityPickerState extends State<CityPicker> {
             // color: Colors.black.withOpacity(1),
           ),
           child: Scaffold(
+            // backgroundColor:
+            //     widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.white,
+            backgroundColor: Colors.transparent,
+            appBar: AppBar(
               // backgroundColor:
-              //     widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.white,
+              //     widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.blue,
               backgroundColor: Colors.transparent,
-              appBar: AppBar(
-                // backgroundColor:
-                //     widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.blue,
-                backgroundColor: Colors.transparent,
-                title: const Text('Search'),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {
-                      showSearch(
-                        context: context,
-                        delegate: MySearch(
-                            popContext: context,
-                            jsonResponse: jsonResponse,
-                            darkTheme: widget.darkTheme),
-                      ).then((value) {
-                        debugPrint(value);
-                      });
-                    },
-                  )
-                ],
-              ),
-              body: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: ListView.builder(
-                  itemCount: listCity!.length,
-                  itemBuilder: (context, index) {
-                    var item = listCity![index];
-                    var weatherData = CurrentWeatherData.fromJson(
-                        listCity![index].currentWeatherData);
+              title: const Text('Search'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    showSearch(
+                      context: context,
+                      delegate: MySearch(
+                          popContext: context,
+                          jsonResponse: jsonResponse,
+                          darkTheme: widget.darkTheme),
+                    ).then((value) {
+                      debugPrint(value);
+                    });
+                  },
+                )
+              ],
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: ListView.builder(
+                itemCount: listCity!.length,
+                itemBuilder: (context, index) {
+                  var item = listCity![index];
+                  var weatherData = CurrentWeatherData.fromJson(
+                      listCity![index].currentWeatherData);
 
-                    return Container(
-                        height: 100,
-                        margin: const EdgeInsets.symmetric(
-                            vertical: 7, horizontal: 15),
-                        decoration: const BoxDecoration(
-                          // color: Colors.blue,
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(20.0),
-                          ),
-                          // color: null,
-                          image: kBackgroundGradient,
-                        ),
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all(EdgeInsets.zero),
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.transparent),
-                            shape: MaterialStateProperty.all(
-                              const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(20.0),
-                                ),
-                              ),
+                  return Container(
+                    height: 100,
+                    margin:
+                        const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+                    decoration: const BoxDecoration(
+                      // color: Colors.blue,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
+                      ),
+                      // color: null,
+                      image: kBackgroundGradient,
+                    ),
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        padding: MaterialStateProperty.all(EdgeInsets.zero),
+                        backgroundColor:
+                            MaterialStateProperty.all(Colors.transparent),
+                        shape: MaterialStateProperty.all(
+                          const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20.0),
                             ),
                           ),
-                          onPressed: () {
-                            Navigator.pop(
-                              context,
-                              {
-                                'lat': item.lat,
-                                'lon': item.lon,
-                                'name': item.name,
-                                'myLocation': listCity![index].myLocation,
-                              },
-                            );
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.pop(
+                          context,
+                          {
+                            'lat': item.lat,
+                            'lon': item.lon,
+                            'name': item.name,
+                            'myLocation': listCity![index].myLocation,
                           },
-                          child: item.myLocation
-                              ? ListCityItemCardChild(
-                                  item: item, weatherData: weatherData)
-                              : Slidable(
-                                  key: const ValueKey(0),
-                                  endActionPane: ActionPane(
-                                    extentRatio: 0.5,
-                                    motion: const StretchMotion(),
-                                    children: [
-                                      Theme(
-                                        data: ThemeData(
-                                          iconTheme:
-                                              const IconThemeData(size: 40.0),
-                                        ),
-                                        child: SlidableAction(
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(20.0),
-                                          ),
-                                          onPressed: (context) {
-                                            setState(() {
-                                              CityList.delCity(item)
-                                                  .whenComplete(() {
-                                                setState(() {
-                                                  listCity!.remove(item);
-                                                });
-                                              });
-                                            });
-                                          },
-                                          backgroundColor: Colors.red,
-                                          foregroundColor: Colors.white,
-                                          icon: Icons.delete_forever,
-                                          // label: 'Save',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  child: ListCityItemCardChild(
-                                      item: item, weatherData: weatherData),
-                                ),
-                        ));
-                  },
-                ),
-              )),
+                        );
+                      },
+                      child: ListCityItemCardChild(
+                        item: item,
+                        weatherData: weatherData,
+                        callBack: item.myLocation
+                            ? null
+                            : (context) {
+                                setState(() {
+                                  CityList.delCity(item).whenComplete(() {
+                                    setState(() {
+                                      listCity!.remove(item);
+                                    });
+                                  });
+                                });
+                              },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
         );
       },
       future: _loading(),
