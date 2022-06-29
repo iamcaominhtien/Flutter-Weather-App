@@ -8,6 +8,7 @@ import '../services/weather.dart';
 import '../components/air_quality_card.dart';
 import '../components/other_weather_info.dart';
 import '../components/hours_weather.dart';
+import '../services/widget_app.dart';
 import 'city_picker.dart';
 
 class LocationScreen extends StatefulWidget {
@@ -107,6 +108,22 @@ class _LocationScreenState extends State<LocationScreen> {
           }
           location = getLocation;
         });
+
+        if (myLocation == true) {
+          //Update widget app (only use for current location)
+          sendAndUpdate(weatherModel);
+        }
+
+        if (myLocation == true) {
+          CityList.saveCity(
+            MyCity(
+              lat: location!.latitude!,
+              lon: location!.longitude!,
+              name: cityName,
+              myLocation: true,
+            ),
+          );
+        }
         return true;
       }
     } catch (e) {

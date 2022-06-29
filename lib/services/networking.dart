@@ -39,6 +39,7 @@ class DailyWeatherData {
       getDayOfWeek,
       getDescription,
       getWeatherIcon,
+      getOnlyDayNumber,
       getWeatherIconOfOpenWeather;
 
   int? temp, feelLike, maxTemp, minTemp;
@@ -56,6 +57,7 @@ class DailyWeatherData {
       this.feelLike,
       this.temp,
       this.getDate,
+      this.getOnlyDayNumber,
       this.getDescription,
       this.visibility});
 
@@ -69,6 +71,10 @@ class DailyWeatherData {
       maxTemp: data['temp']['max'].round(),
       minTemp: data['temp']['min'].round(),
       getDate: UsefulFunction.getDate(
+        DateTime.fromMillisecondsSinceEpoch(data['dt'].toInt() * 1000,
+            isUtc: false),
+      ),
+      getOnlyDayNumber: UsefulFunction.getOnlyDayNumber(
         DateTime.fromMillisecondsSinceEpoch(data['dt'].toInt() * 1000,
             isUtc: false),
       ),

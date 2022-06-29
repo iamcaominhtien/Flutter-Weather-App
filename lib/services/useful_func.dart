@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -9,6 +8,10 @@ class UsefulFunction {
 
   static String getDate(DateTime date) {
     return DateFormat('EEEE, MMM dd yyyy').format(date);
+  }
+
+  static String getOnlyDayNumber(DateTime date) {
+    return DateFormat('dd/MM').format(date);
   }
 
   static String getHour(DateTime date) {

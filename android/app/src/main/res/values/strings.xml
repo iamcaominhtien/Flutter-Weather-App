@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">climate_app</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="app_widget_description">This is an app widget description</string>
+    <string name="_21">21</string>
+    <string name="most_cloudy">Most cloudy</string>
+    <string name="_22">22</string>
+    <string name="textview">TextView</string>
+    <string name="_24">24</string>
+    <string name="_25">25</string>
+    <string name="_26">26</string>
+    <string name="todo">TODO</string>
+    <string name="_23">23</string>
+    <string name="_28">28°</string>
+    <string name="_20">20</string>
+    <string name="nha_trang">Nha Trang</string>
+    <string name="_29">29°</string>
+</resources>

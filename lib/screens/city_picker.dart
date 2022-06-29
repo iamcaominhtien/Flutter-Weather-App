@@ -4,7 +4,6 @@ import 'package:climate_app/services/list_chose_city.dart';
 import 'package:climate_app/services/networking.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
 import '../components/constants.dart';
 import '../components/list_city_item_card_child.dart';
 import '../components/my_search_delegate.dart';
