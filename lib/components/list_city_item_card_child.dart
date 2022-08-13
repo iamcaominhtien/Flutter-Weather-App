@@ -44,6 +44,7 @@ class ListCityItemCardChild extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,9 +106,11 @@ class ListCityItemCardChild extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                Image.network(
-                  weatherData.getWeatherIconOfOpenWeather!,
-                  width: 50,
+                Flexible(
+                  child: Image.network(
+                    weatherData.getWeatherIconOfOpenWeather!,
+                    width: 50,
+                  ),
                 ),
               ],
             )
