@@ -17,7 +17,7 @@ class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
     return Column(
       children: [
         SizedBox(
-          height: 150,
+          height: 160,
           child: Row(
             children: [
               OtherWidgetInformationCard(
@@ -66,7 +66,7 @@ class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
           height: 20,
         ),
         SizedBox(
-          height: 150,
+          height: 160,
           child: Row(
             children: [
               OtherWidgetInformationCard(
@@ -133,6 +133,7 @@ class _OtherWidgetInformationCardState
         // height: 150,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
