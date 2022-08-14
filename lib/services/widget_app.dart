@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:climate_app/services/my_weather_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,6 +8,7 @@ import '../components/widget_app_data.dart';
 import '../screens/index.dart';
 import 'networking.dart';
 import 'weather.dart';
+import 'package:provider/provider.dart';
 
 Future<void> sendAndUpdate(WeatherModel myWeatherModel) async {
   debugPrint(
@@ -100,32 +102,35 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Climate App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (context) => MyWeatherProvider(),
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Climate App',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const HomePage(),
       ),
-      home: const HomePage(),
     );
   }
 
   @override
   void initState() {
     super.initState();
-    HomeWidget.setAppGroupId('YOUR_GROUP_ID');
-    HomeWidget.registerBackgroundCallback(backgroundCallback);
-    getWidgetDataInitial();
-    // HomeWidget.initiallyLaunchedFromHomeWidget().then(_launchedFromWidget);
-    didChangeDependencies();
+    // HomeWidget.setAppGroupId('YOUR_GROUP_ID');
+    // HomeWidget.registerBackgroundCallback(backgroundCallback);
+    // getWidgetDataInitial();
+    // // HomeWidget.initiallyLaunchedFromHomeWidget().then(_launchedFromWidget);
+    // didChangeDependencies();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _checkForWidgetLaunch();
-    HomeWidget.widgetClicked.listen(_launchedFromWidget);
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   _checkForWidgetLaunch();
+  //   HomeWidget.widgetClicked.listen(_launchedFromWidget);
+  // }
 
   void _checkForWidgetLaunch() {
     if (kDebugMode) {

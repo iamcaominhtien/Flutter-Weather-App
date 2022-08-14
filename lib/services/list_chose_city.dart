@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'weather.dart';
 
 class MyCity {
@@ -63,7 +62,7 @@ class CityList {
         }
         return await sharedPreferences.setStringList(keyCityList, listCity);
       }
-      return true;
+      return false;
     }
   }
 
