@@ -2,7 +2,7 @@ import 'package:climate_app/services/my_weather_provider.dart';
 import 'package:climate_app/services/useful_func.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'location_screen/location_screen.dart';
+import 'location_screen.dart';
 
 class ErrorPage extends StatelessWidget {
   const ErrorPage({Key? key}) : super(key: key);
