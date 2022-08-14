@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../services/my_weather_provider.dart';
 
 const kTempTextStyle = TextStyle(
   fontFamily: 'Spartan MB',

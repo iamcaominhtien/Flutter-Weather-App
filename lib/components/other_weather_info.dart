@@ -1,195 +1,98 @@
+import 'package:climate_app/services/my_weather_provider.dart';
 import 'package:flutter/material.dart';
 import '../services/networking.dart';
+import 'package:provider/provider.dart';
+import 'other_weather_info_card.dart';
 
-class OtherWidgetInformation extends StatefulWidget {
-  final dynamic data;
-  const OtherWidgetInformation({Key? key, this.data}) : super(key: key);
+class OtherWidgetInformation extends StatelessWidget {
+  const OtherWidgetInformation({Key? key}) : super(key: key);
 
-  @override
-  State<OtherWidgetInformation> createState() => _OtherWidgetInformationState();
-}
-
-class _OtherWidgetInformationState extends State<OtherWidgetInformation> {
   @override
   Widget build(BuildContext context) {
-    var data = CurrentOneCallOpenWeather.fromJson(widget.data['current']);
-
-    return Column(
-      children: [
-        SizedBox(
-          height: 160,
-          child: Row(
-            children: [
-              OtherWidgetInformationCard(
-                bodyIcon: 'gauge',
-                value: data.pressure,
-                metric: 'hPA',
-                title: 'Áp suất khí quyển',
-                titleIcon: 'at_press',
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              OtherWidgetInformationCard(
-                title: 'Bình minh',
-                titleIcon: 'sunrise',
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      data.sunRise ?? "Unknown",
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontSize: 25,
-                      ),
-                      textAlign: TextAlign.left,
-                    ),
-                    Center(
-                      child: Image.asset(
-                        'assets/sunrise2.png',
-                        width: 60,
-                      ),
-                    ),
-                    Text('Hoàng hôn: ${data.sunSet ?? "Unknown"}'),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-        SizedBox(
-          height: 160,
-          child: Row(
-            children: [
-              OtherWidgetInformationCard(
-                value: data.uvi,
-                title: 'Mức UV',
-                bodyIcon: 'uvi_white_black_2',
-                titleIcon: 'uv_white_black',
-              ),
-              const SizedBox(
-                width: 20,
-              ),
-              OtherWidgetInformationCard(
-                value: data.clouds,
-                metric: '%',
-                title: 'Mây phủ',
-                bodyIcon: 'cloud_icon',
-                titleIcon: 'partly-cloudy',
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(
-          height: 20,
-        ),
-      ],
-    );
-  }
-}
-
-class OtherWidgetInformationCard extends StatefulWidget {
-  const OtherWidgetInformationCard({
-    Key? key,
-    this.title,
-    this.titleIcon,
-    this.child,
-    this.metric,
-    this.value,
-    this.bodyIcon,
-  }) : super(key: key);
-
-  final String? title;
-  final String? titleIcon;
-  final Widget? child;
-  final String? metric;
-  final String? value;
-  final String? bodyIcon;
-
-  @override
-  State<OtherWidgetInformationCard> createState() =>
-      _OtherWidgetInformationCardState();
-}
-
-class _OtherWidgetInformationCardState
-    extends State<OtherWidgetInformationCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(10.0),
-        decoration: BoxDecoration(
-          color: Colors.grey[300],
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-        ),
-        // height: 150,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Consumer<MyWeatherProvider>(
+      builder: (context, provider, child) {
+        var data = CurrentOneCallOpenWeather.fromJson(
+            provider.detailedWeatherDataJson['current']);
+        return Column(
           children: [
-            Row(
-              children: [
-                Image.asset(
-                  'assets/${widget.titleIcon}.png',
-                  width: 20,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  widget.title!,
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
-            // const SizedBox(
-            //   height: 40,
-            // ),
-            widget.child ??
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Image.asset(
-                      'assets/${widget.bodyIcon}.png',
-                      width: 70,
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.baseline,
-                      textBaseline: TextBaseline.ideographic,
+            SizedBox(
+              height: 160,
+              child: Row(
+                children: [
+                  OtherWidgetInformationCard(
+                    bodyIcon: 'gauge',
+                    value: data.pressure,
+                    metric: 'hPA',
+                    title: 'Áp suất khí quyển',
+                    titleIcon: 'at_press',
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  OtherWidgetInformationCard(
+                    title: 'Bình minh',
+                    titleIcon: 'sunrise',
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        const SizedBox(
+                          height: 5,
+                        ),
                         Text(
-                          widget.value ?? '',
+                          data.sunRise ?? "Unknown",
                           style: const TextStyle(
-                            fontSize: 25,
                             fontWeight: FontWeight.w900,
+                            fontSize: 25,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                        Center(
+                          child: Image.asset(
+                            'assets/sunrise2.png',
+                            width: 60,
                           ),
                         ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(widget.metric ?? ''),
+                        Text('Hoàng hôn: ${data.sunSet ?? "Unknown"}'),
                       ],
                     ),
-                  ],
-                )
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            SizedBox(
+              height: 160,
+              child: Row(
+                children: [
+                  OtherWidgetInformationCard(
+                    value: data.uvi,
+                    title: 'Mức UV',
+                    bodyIcon: 'uvi_white_black_2',
+                    titleIcon: 'uv_white_black',
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  OtherWidgetInformationCard(
+                    value: data.clouds,
+                    metric: '%',
+                    title: 'Mây phủ',
+                    bodyIcon: 'cloud_icon',
+                    titleIcon: 'partly-cloudy',
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
           ],
-        ),
-      ),
+        );
+      },
     );
   }
 }

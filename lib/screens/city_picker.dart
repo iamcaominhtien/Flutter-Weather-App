@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:climate_app/services/list_chose_city.dart';
+import 'package:climate_app/services/my_weather_provider.dart';
 import 'package:climate_app/services/networking.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../components/constants.dart';
 import '../components/list_city_item_card_child.dart';
 import '../components/my_search_delegate.dart';
@@ -27,24 +27,13 @@ class CityPicker extends StatefulWidget {
 }
 
 class _CityPickerState extends State<CityPicker> {
-  // List<String> searchList = [];
-  List<MyCity>? listCity;
-
-  Future<String> _loadFromAsset() async {
-    return await rootBundle.loadString("assets/cities.json");
-  }
-
-  Future<dynamic> parseJson() async {
-    String jsonString = await _loadFromAsset();
-    // jsonResponse = jsonDecode(jsonString);
-    return jsonDecode(jsonString);
-  }
+  late MyWeatherProvider providerNotListen;
 
   Future<int?> _loading() async {
     try {
-      jsonResponse = await parseJson();
-      listCity = await CityList.readCityList();
-      if (jsonResponse != null && listCity != null) {
+      await providerNotListen.loadSearchedCityToJson();
+      if (providerNotListen.listJsonCities != null &&
+          providerNotListen.listSearchedCities != null) {
         return 1;
       } else {
         return null;
@@ -58,6 +47,7 @@ class _CityPickerState extends State<CityPicker> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    providerNotListen = Provider.of<MyWeatherProvider>(context, listen: false);
   }
 
   @override
@@ -112,106 +102,103 @@ class _CityPickerState extends State<CityPicker> {
               ));
         }
 
-        return Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: const AssetImage('assets/sunny.jfif'),
-              colorFilter: widget.darkTheme == true
-                  ? const ColorFilter.mode(Colors.blue, BlendMode.modulate)
-                  : null,
-              fit: BoxFit.fill,
+        return Consumer<MyWeatherProvider>(
+          builder: (context, provider, child) => Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: const AssetImage('assets/sunny.jfif'),
+                colorFilter: widget.darkTheme == true
+                    ? const ColorFilter.mode(Colors.blue, BlendMode.modulate)
+                    : null,
+                fit: BoxFit.fill,
+              ),
             ),
-            // color: Colors.black.withOpacity(1),
-          ),
-          child: Scaffold(
-            // backgroundColor:
-            //     widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.white,
-            backgroundColor: Colors.transparent,
-            appBar: AppBar(
-              // backgroundColor:
-              //     widget.darkTheme ? const Color(0xFF0B0C1E) : Colors.blue,
+            child: Scaffold(
               backgroundColor: Colors.transparent,
-              title: const Text('Search'),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {
-                    showSearch(
-                      context: context,
-                      delegate: MySearch(
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                title: const Text('Search'),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      showSearch(
+                        context: context,
+                        delegate: MySearch(
                           popContext: context,
-                          jsonResponse: jsonResponse,
-                          darkTheme: widget.darkTheme),
-                    ).then((value) {
-                      debugPrint(value);
-                    });
-                  },
-                )
-              ],
-            ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: ListView.builder(
-                itemCount: listCity!.length,
-                itemBuilder: (context, index) {
-                  var item = listCity![index];
-                  var weatherData = CurrentWeatherData.fromJson(
-                      listCity![index].currentWeatherData);
+                          jsonResponse: provider.listJsonCities,
+                          darkTheme: widget.darkTheme,
+                        ),
+                      ).then((value) {
+                        debugPrint(value);
+                      });
+                    },
+                  )
+                ],
+              ),
+              body: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: ListView.builder(
+                  itemCount: provider.listSearchedCities!.length,
+                  itemBuilder: (context, index) {
+                    var item = provider.listSearchedCities![index];
+                    var weatherData = CurrentWeatherData.fromJson(
+                        provider.listSearchedCities![index].currentWeatherData);
 
-                  return Container(
-                    height: 100,
-                    margin:
-                        const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
-                    decoration: const BoxDecoration(
-                      // color: Colors.blue,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20.0),
+                    return Container(
+                      height: 100,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 7, horizontal: 15),
+                      decoration: const BoxDecoration(
+                        // color: Colors.blue,
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(20.0),
+                        ),
+                        // color: null,
+                        image: kBackgroundGradient,
                       ),
-                      // color: null,
-                      image: kBackgroundGradient,
-                    ),
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        padding: MaterialStateProperty.all(EdgeInsets.zero),
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.transparent),
-                        shape: MaterialStateProperty.all(
-                          const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(20.0),
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(EdgeInsets.zero),
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.transparent),
+                          shape: MaterialStateProperty.all(
+                            const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(20.0),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(
-                          context,
-                          {
-                            'lat': item.lat,
-                            'lon': item.lon,
-                            'name': item.name,
-                            'myLocation': listCity![index].myLocation,
-                          },
-                        );
-                      },
-                      child: ListCityItemCardChild(
-                        item: item,
-                        weatherData: weatherData,
-                        callBack: item.myLocation
-                            ? null
-                            : (context) {
-                                setState(() {
-                                  CityList.delCity(item).whenComplete(() {
-                                    setState(() {
-                                      listCity!.remove(item);
+                        onPressed: () {
+                          Navigator.pop(
+                            context,
+                            {
+                              'lat': item.lat,
+                              'lon': item.lon,
+                              'name': item.name,
+                              'myLocation': provider
+                                  .listSearchedCities![index].myLocation,
+                            },
+                          );
+                        },
+                        child: ListCityItemCardChild(
+                          item: item,
+                          weatherData: weatherData,
+                          callBack: item.myLocation
+                              ? null
+                              : (context) {
+                                  setState(() {
+                                    CityList.delCity(item).whenComplete(() {
+                                      provider.delItemOfListSearchedCity(item);
                                     });
                                   });
-                                });
-                              },
+                                },
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),

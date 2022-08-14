@@ -1,10 +1,10 @@
 import 'package:climate_app/services/useful_func.dart';
-import 'package:climate_app/services/weather.dart';
-import '../services/location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import '../services/my_weather_provider.dart';
 import 'error_page.dart';
-import 'location_screen.dart';
+import 'location_screen/location_screen.dart';
+import 'package:provider/provider.dart';
 
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({Key? key}) : super(key: key);
@@ -14,39 +14,21 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-  var location = MyLocation();
-  var weatherModel = WeatherModel();
-  dynamic currentWeatherData;
-  dynamic detailedWeatherData;
-  String labelUpdateButton = "update";
+  late MyWeatherProvider provider;
 
   @override
   void initState() {
     super.initState();
-    getCurrentWeatherData();
-  }
-
-  Future getCurrentWeatherData() async {
-    try {
-      var location = await weatherModel.getCurrentWeatherByLocation();
-      if (weatherModel.currentWeatherData != null &&
-          weatherModel.detailWeatherData != null) {
-        UsefulFunction.pushReplacement(
-          context: context,
-          page: LocationScreen(
-            currentWeatherData: weatherModel.currentWeatherData,
-            detailedWeatherData: weatherModel.detailWeatherData,
-            location: location,
-          ),
-        );
-      } else {
-        UsefulFunction.pushReplacement(
-            context: context, page: const ErrorPage());
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-      UsefulFunction.pushReplacement(context: context, page: const ErrorPage());
-    }
+    provider = Provider.of<MyWeatherProvider>(context, listen: false);
+    provider.initialCurrentWeatherData().then((value) {
+      value == true
+          ? UsefulFunction.pushReplacement(
+              context: context,
+              page: const LocationScreen(),
+            )
+          : UsefulFunction.pushReplacement(
+              context: context, page: const ErrorPage());
+    });
   }
 
   @override

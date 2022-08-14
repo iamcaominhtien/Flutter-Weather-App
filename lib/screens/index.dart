@@ -53,30 +53,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               ),
-              // RichText(
-              //   textAlign: TextAlign.center,
-              //   text: const TextSpan(
-              //     style: TextStyle(
-              //       fontWeight: FontWeight.w900,
-              //       color: Colors.white,
-              //       fontSize: 40,
-              //     ),
-              //     children: <TextSpan>[
-              //       TextSpan(
-              //         text: 'Weather',
-              //         style: TextStyle(
-              //           color: Colors.white,
-              //         ),
-              //       ),
-              //       TextSpan(
-              //         text: ' News & Feed',
-              //         style: TextStyle(
-              //           color: Colors.orange,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               const Text(
                 'Đưa ra các dự báo về thời tiết theo giờ và theo ngày',
                 style: TextStyle(
