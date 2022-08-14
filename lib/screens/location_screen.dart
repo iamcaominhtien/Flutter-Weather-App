@@ -4,12 +4,12 @@ import 'package:climate_app/services/my_weather_provider.dart';
 import 'package:climate_app/services/useful_func.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../components/weather_card.dart';
-import '../../components/air_quality_card.dart';
-import '../../components/other_weather_info.dart';
-import '../../components/hours_weather.dart';
-import '../../services/widget_app.dart';
-import '../city_picker.dart';
+import '../components/weather_card.dart';
+import '../components/air_quality_card.dart';
+import '../components/other_weather_info.dart';
+import '../components/hours_weather.dart';
+import '../services/widget_app.dart';
+import 'city_picker.dart';
 
 class LocationScreen extends StatefulWidget {
   const LocationScreen({Key? key}) : super(key: key);
@@ -23,14 +23,14 @@ class _LocationScreenState extends State<LocationScreen> {
   dynamic colorSwitchButton = Colors.yellow;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-  late MyWeatherProvider provider;
+  late MyWeatherProvider providerNotListen;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    provider = Provider.of<MyWeatherProvider>(context, listen: false);
-    provider.updateSearchedListCity();
+    providerNotListen = Provider.of<MyWeatherProvider>(context, listen: false);
+    providerNotListen.updateSearchedListCity();
   }
 
   @override
@@ -164,15 +164,15 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 
   Future<bool> updateWeather({Map<String, dynamic>? geo}) async {
-    return provider.updateWeather(geo: geo).then((value) {
+    return providerNotListen.updateWeather(geo: geo).then((value) {
       if (value == true) {
-        if (provider.myLocation == true) {
+        if (providerNotListen.myLocation == true) {
           //Update widget app (only use for current location)
-          sendAndUpdate(provider.weatherModel);
+          sendAndUpdate(providerNotListen.weatherModel);
         }
 
-        if (provider.myLocation == true) {
-          provider.updateSearchedListCity();
+        if (providerNotListen.myLocation == true) {
+          providerNotListen.updateSearchedListCity();
         }
         // provider.
         return true;
