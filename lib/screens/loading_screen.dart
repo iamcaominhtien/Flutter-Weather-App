@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../services/my_weather_provider.dart';
 import 'error_page.dart';
-import 'location_screen/location_screen.dart';
+import 'location_screen.dart';
 import 'package:provider/provider.dart';
 
 class LoadingScreen extends StatefulWidget {

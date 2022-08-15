@@ -63,10 +63,10 @@ class MyWeatherProvider extends ChangeNotifier {
           weatherModel.detailWeatherData != null) {
         currentWeatherDataJson = weatherModel.currentWeatherData;
         detailedWeatherDataJson = weatherModel.detailWeatherData;
+        currentWeatherDataFromJson =
+            CurrentWeatherData.fromJson(currentWeatherDataJson);
 
         if (geo == null && location == null) {
-          currentWeatherDataFromJson =
-              CurrentWeatherData.fromJson(currentWeatherDataJson);
           cityName = currentWeatherDataFromJson!.getCityName ??
               "Unknown".toUpperCase();
         } else {
@@ -164,7 +164,7 @@ class MyWeatherProvider extends ChangeNotifier {
       String jsonString = await rootBundle.loadString("assets/cities.json");
       listJsonCities = jsonDecode(jsonString);
     }
-    if (listSearchedCities == null) {
+    if (listSearchedCities == null||DateTime.now().difference(listSearchedCitiesLastUpdate!).inHours > 1) {
       listSearchedCities = await CityList.readCityList();
       listSearchedCitiesLastUpdate = DateTime.now();
     }
@@ -172,7 +172,6 @@ class MyWeatherProvider extends ChangeNotifier {
 
   void updateSearchedListCity({MyCity? city}) async {
     // listSearchedCities = await CityList.readCityList();
-    debugPrint('save city');
     MyCity myCity = city ??
         MyCity(
           lat: location!.latitude!,
@@ -183,15 +182,16 @@ class MyWeatherProvider extends ChangeNotifier {
     CityList.saveCity(
       myCity,
     ).then((value) async {
-      debugPrint('Value: $value; cityName: ${myCity.name}');
       if (value == true) {
         listSearchedCities = await CityList.readCityList();
-        if (listSearchedCities != null) {
-          for (int i = 0; i < listSearchedCities!.length; i++) {
-            debugPrint(
-                '${listSearchedCities![i].name} ${listSearchedCities![i].lat} ${listSearchedCities![i].lon}');
-          }
-        }
+        listSearchedCitiesLastUpdate = DateTime.now();
+
+        // if (listSearchedCities != null) {
+        //   for (int i = 0; i < listSearchedCities!.length; i++) {
+        //     debugPrint(
+        //         '${listSearchedCities![i].name} ${listSearchedCities![i].lat} ${listSearchedCities![i].lon}');
+        //   }
+        // }
       }
     });
 
@@ -202,5 +202,4 @@ class MyWeatherProvider extends ChangeNotifier {
     listSearchedCities?.remove(city);
     notifyListeners();
   }
-  // ||DateTime.now().difference(listSearchedCitiesLastUpdate!).inHours > 1
 }
